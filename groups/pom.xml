@@ -29,4 +29,18 @@
         <module>common</module>
         <module>cli</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>rpmbuild</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>rpm-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
