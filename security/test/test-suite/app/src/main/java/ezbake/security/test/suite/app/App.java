@@ -50,7 +50,8 @@ public class App implements Runnable {
     @SubCommands({
             @SubCommand(name="security", impl=SecurityCommand.class),
             @SubCommand(name="registration", impl=RegistrationCommand.class),
-            @SubCommand(name="performance", impl=PerformanceTestCommand.class)
+	    @SubCommand(name="performance", impl=PerformanceTestCommand.class),
+            @SubCommand(name="ua", impl=UATestCommand.class)
     })
     Command command;
 

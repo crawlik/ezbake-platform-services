@@ -29,6 +29,11 @@
             <artifactId>args4j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+	</dependency>
+
         <!-- EzBake dependencies -->
         <dependency>
             <groupId>ezbake</groupId>

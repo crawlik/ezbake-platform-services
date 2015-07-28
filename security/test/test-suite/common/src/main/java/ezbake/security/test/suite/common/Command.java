@@ -50,6 +50,9 @@ public abstract class Command {
 
     public void setConfigurationProperties(Properties configurationProperties) {
         this.configuration = configurationProperties;
+	if (myPkiDir != null) {
+	    this.configuration.setProperty(EzBakePropertyConstants.EZBAKE_CERTIFICATES_DIRECTORY, myPkiDir);
+	}
     }
 
     public PKeyCrypto getEfeCrypto() throws IOException {
