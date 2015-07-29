@@ -46,6 +46,12 @@
             <groupId>ezbake</groupId>
             <artifactId>ezbake-security-persistence</artifactId>
             <version>2.1</version>
+	    <exclusions>
+	      <exclusion>
+		<groupId>org.apache.directory.api</groupId>
+		<artifactId>api-util</artifactId>
+	      </exclusion>
+	    </exclusions>
         </dependency>
 
         <!-- Test dependencies -->
