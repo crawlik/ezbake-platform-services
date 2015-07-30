@@ -100,6 +100,7 @@ public class LDAPUAService implements UserAttributeService {
 	try {
 	    getUserOrThrow(principal);
 	} catch (UserNotFoundException e) {
+	    logger.debug("couldn't find user {}", principal, e);
 	    return false;
 	}
 	return true;
@@ -138,6 +139,9 @@ public class LDAPUAService implements UserAttributeService {
 	    Dn userDnVal = userDn(principal);
 	    logger.debug("looking up user with dn {}", userDnVal);
 	    Entry userEntry = connection.lookup(userDnVal);
+	    if (userEntry == null) {
+		throw new UserNotFoundException("LDAP response for " + userDnVal + " empty");
+	    }
 	    User user = userFromEntry(userEntry);
 	    user.setPrincipal(principal);
 	    return user;
@@ -164,16 +168,16 @@ public class LDAPUAService implements UserAttributeService {
 	for (Attribute attr : userEntry.getAttributes()) {
 	    logger.trace("considering attribute {}", attr);
 	    switch (attr.getUpId()) {
-	    case "givenName": user.setFirstName(attr.get().toString()); break;
-	    case "sn": user.setSurName(attr.get().toString()); break;
-	    case "uid": user.setUid(attr.get().toString()); break;
-	    case "ou": user.setCompany(attr.get().toString()); user.setOrganization(attr.get().toString()); user.getAuthorizations().setOrganization(attr.get().toString()); break;
-	    case "telephoneNumber": user.setPhoneNumber(attr.get().toString()); break;
-	    case "mail": user.getEmails().put(String.valueOf(emailCount++), attr.get().toString()); break;
-	    case "ezAuthLevel": user.getAuthorizations().setLevel(attr.get().toString()); break;
+	    case "givenName": user.setFirstName(attr.getString()); break;
+	    case "sn": user.setSurName(attr.getString()); break;
+	    case "uid": user.setUid(attr.getString()); break;
+	    case "ou": user.setCompany(attr.getString()); user.setOrganization(attr.getString()); user.getAuthorizations().setOrganization(attr.getString()); break;
+	    case "telephoneNumber": user.setPhoneNumber(attr.getString()); break;
+	    case "mail": user.getEmails().put(String.valueOf(emailCount++), attr.getString()); break;
+	    case "ezAuthLevel": user.getAuthorizations().setLevel(attr.getString()); break;
 	    case "ezGovernmentAuth": addToList(user.getAuthorizations().getAuths(), attr.clone()); break;
 	    case "ezCommunityAuth": addToList(user.getAuthorizations().getCommunityAuthorizations(), attr.clone()); break;
-	    case "ezCountryOfCitizenship": user.getAuthorizations().setCitizenship(attr.get().toString()); break;
+	    case "ezCountryOfCitizenship": user.getAuthorizations().setCitizenship(attr.getString()); break;
 	    case "ezGroupAndProject": addToProjects(user.getProjects(), attr.clone()); break;
 	    case "ezCommunityName": user.getCommunities().addAll(communitiesFromAttr(attr.clone())); break;
 	    case "ezAffiliation": addToList(user.getAffiliations(), attr.clone()); break;
@@ -207,13 +211,13 @@ public class LDAPUAService implements UserAttributeService {
 	for (Attribute attr : communityEntry.getAttributes()) {
 	    logger.trace("considering attribute {}", attr);
 	    switch (attr.getUpId()) {
-	    case "ezCommunityName": result.setCommunityName(attr.get().toString()); break;
-	    case "ezCommunityType": result.setCommunityType(attr.get().toString()); break;
-	    case "ou": result.setOrganization(attr.get().toString()); break;
+	    case "ezCommunityName": result.setCommunityName(attr.getString()); break;
+	    case "ezCommunityType": result.setCommunityType(attr.getString()); break;
+	    case "ou": result.setOrganization(attr.getString()); break;
 	    case "ezTopic": addToList(result.getTopics(), attr.clone()); break;
 	    case "ezRegion": addToList(result.getRegions(), attr.clone()); break;
 	    case "ezGroupMemberOf": addToList(result.getGroups(), attr.clone()); break;
-	    case "ezCommunityFlag": result.getFlags().put(flagFrom(attr.get().toString()),boolFrom(attr.get().toString())); break;
+	    case "ezCommunityFlag": result.getFlags().put(flagFrom(attr.getString()),boolFrom(attr.getString())); break;
 	    }
 	}
 	return result;

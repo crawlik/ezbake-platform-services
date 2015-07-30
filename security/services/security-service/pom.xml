@@ -77,6 +77,26 @@
         <dependency>
             <groupId>ezbake</groupId>
             <artifactId>ezbake-permission-utils</artifactId>
+
+	    <!--
+		
+		Exclude accumulo-core here so that it can be brought
+		in through
+		ezbake-security-persistence. ezbake-permissions-utils
+		excludes accumulo-fate and some other goodness that we
+		actually want here. Without this exclusion, these
+		items can be excluded, depending on whether
+		accumulo-core comes from security-persistence or
+		permission-utils.
+
+              -->
+
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.accumulo</groupId>
+                    <artifactId>accumulo-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>ezbake</groupId>

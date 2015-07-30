@@ -36,6 +36,7 @@ import ezbake.security.service.sync.EzSecurityRedisCache;
 import ezbake.security.thrift.*;
 import ezbake.security.thrift.UserNotFoundException;
 import ezbake.security.ua.UAModule;
+import ezbake.security.impl.ua.LDAPUAService;
 import ezbake.security.service.EzSecurityContext;
 import ezbake.security.service.registration.AppInstance;
 import ezbake.security.service.registration.EzbakeRegistrationService;
@@ -152,7 +153,8 @@ public class EzSecurityHandler extends EzBakeBaseThriftService implements EzSecu
                 new EzSecurityModule(ezConfig),
                 new AdminServiceModule(ezConfig),
                 new UAModule(ezConfig),
-                new TokenJSONModule(ezConfig));
+                new TokenJSONModule(ezConfig),
+                new LDAPUAService.LdapModule(ezConfig));
         return injector.getInstance(EzSecurityHandler.class);
     }
 
