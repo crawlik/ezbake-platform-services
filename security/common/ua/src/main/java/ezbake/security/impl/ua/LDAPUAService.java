@@ -135,15 +135,17 @@ public class LDAPUAService implements UserAttributeService {
 
     private User getUserOrThrow(String principal) throws UserNotFoundException {
 	try {
+	    logger.debug("looking up user {}", principal);
 	    maybeBind();
 	    Dn userDnVal = userDn(principal);
-	    logger.debug("looking up user with dn {}", userDnVal);
+	    logger.trace("user {} is assumed to have dn {}", principal, userDnVal);
 	    Entry userEntry = connection.lookup(userDnVal);
 	    if (userEntry == null) {
 		throw new UserNotFoundException("LDAP response for " + userDnVal + " empty");
 	    }
 	    User user = userFromEntry(userEntry);
 	    user.setPrincipal(principal);
+	    logger.trace("found user: {}", user);
 	    return user;
 	} catch (LdapException e) {
 	    throw new UserNotFoundException("Couldn't find " + principal, e);
@@ -324,7 +326,7 @@ public class LDAPUAService implements UserAttributeService {
 
     private void maybeBind() throws LdapException {
 	if (!connection.isAuthenticated()) {
-	    logger.info("binding to ldap. This should only happen once.");
+	    logger.debug("binding to ldap.");
 	    connection.bind();
 	}
     }
