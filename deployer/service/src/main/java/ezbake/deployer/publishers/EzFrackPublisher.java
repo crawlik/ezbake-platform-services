@@ -121,6 +121,7 @@ public class EzFrackPublisher implements EzPublisher {
 
             //Public keys for these topics (topics being broadcasted)
             Set<String> topicsBroadcasting = client.getApprovedTopicsForFeed(appId, feedName, insToken);
+	    log.info("retrieving keys for topics to broadcast to: {}", topicsBroadcasting);
             //topics broadcasted
             for (String topic : topicsBroadcasting) {
                 String privateKey = lockSmithClient.retrieveKey(lockSmithToken, topic, KeyType.RSA);
@@ -130,6 +131,7 @@ public class EzFrackPublisher implements EzPublisher {
             }
             //Private keys of topic being listened to
             Set<String> topicsListen = client.getListeningTopicsForFeed(appId, feedName, insToken);
+	    log.info("retrieving keys for topics to listen to: {}", topicsListen);
             for (String topic : topicsListen) {
                 String privateKey = lockSmithClient.retrieveKey(lockSmithToken, topic, KeyType.RSA);
                 listeningTopics.put(topic, privateKey);

@@ -114,7 +114,7 @@ public class EzGroupsService extends BaseGroupsService {
 
     @Override
     public boolean ping() {
-        logger.info("received ping");
+        logger.info("received ping. hello??");
         return true;
     }
 
@@ -1846,6 +1846,7 @@ public class EzGroupsService extends BaseGroupsService {
     public Set<Long> createAppUserAndGetAuthorizations(EzSecurityToken token, List<String> chain, String securityId,
             String appName)
             throws EzSecurityTokenException, AuthorizationException, EzGroupOperationException, GroupQueryException {
+	System.out.println("createAppUserAndGetAuthorizations test...");
         try {
             logger.debug(
                     "createAppUserAndGetAuthorizations - requesting app: {}, request chain: {}, security id: {}, "

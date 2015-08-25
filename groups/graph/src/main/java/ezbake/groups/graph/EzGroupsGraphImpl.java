@@ -1295,6 +1295,8 @@ public class EzGroupsGraphImpl implements GroupsGraph {
             graph.rollback();
             throw new UserNotFoundException("No user found with ID: " + userID);
         }
+	
+	logger.trace("getting groups for {}", userID);
         return userGroups(users.next(), explicitGroupsOnly, includeInactive);
     }
 
@@ -1309,6 +1311,9 @@ public class EzGroupsGraphImpl implements GroupsGraph {
      */
     @VisibleForTesting
     Set<Group> userGroups(Vertex user, final boolean explicitPath, boolean includeInactive) {
+	logger.trace("user: {}, explicitPath: {}, includeInactive: {}",
+		     user, explicitPath, includeInactive);
+
         final Set<Group> groups = new HashSet<>();
 
         GremlinPipeline<Object, Vertex> pipe =
@@ -1336,6 +1341,8 @@ public class EzGroupsGraphImpl implements GroupsGraph {
             }
             groups.add(g);
         }
+
+	logger.trace("got user groups: {}", groups);
         return groups;
     }
 

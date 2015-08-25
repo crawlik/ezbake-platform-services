@@ -1253,15 +1253,20 @@ public class SSRServiceHandler extends EzBakeBasePurgeThriftService implements s
         GeospatialExtractorService.Client geoClient = null;
         EzElastic.Client docClient = null;
         try {
+            boolean result;
+
             logger.debug("getting document dataset");
             docClient = getDocumentClient();
-            logger.debug("getting geo service");
-            geoClient = getGeospatialClient();
-            boolean result;
             logger.debug("calling ping on doc client");
             result = docClient.ping();
-            logger.debug("calling ping on geo client");
-            result = result && geoClient.ping();
+
+	    if (isGeoEnabled) {
+		logger.debug("getting geo service");
+		geoClient = getGeospatialClient();
+		logger.debug("calling ping on geo client");
+		result = result && geoClient.ping();
+	    }
+
             return result;
         } catch (TException e) {
             logger.error("SSR ping failed : {}", e.getMessage());

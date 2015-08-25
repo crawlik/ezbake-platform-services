@@ -54,7 +54,7 @@ function install_package() {
 function install_maven() {
     local dir="$1"
     echo "Running maven package of ${dir}"
-    (cd "${dir}" && mvn clean package) || (echo "failed to package ${dir}"; exit 1)
+    (cd "${dir}" && mvn clean package -DskipTests) || (echo "failed to package ${dir}"; exit 1)
 }
 
 echo "cloning the repos from git"

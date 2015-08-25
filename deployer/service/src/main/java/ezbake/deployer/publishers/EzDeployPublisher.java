@@ -147,8 +147,14 @@ public class EzDeployPublisher implements EzPublisher {
         for (ArtifactContentsPublisher processor : fileProcessors.get(key)) {
             Collection<ArtifactDataEntry> files = processor.generateEntries(artifact);
             if (files != null) {
+		for (ArtifactDataEntry entry : files) {
+		    String fileName = entry.getEntry().getName();
+		    log.info("adding file {} to artifact {} {}.", fileName, getAppId(artifact), getServiceId(artifact));
+		}
                 injectFiles.addAll(files);
-            }
+            } else {
+		log.info("no files to add for artifact {} {}!", getAppId(artifact), getServiceId(artifact));
+	    }
         }
         ArtifactHelpers.addFilesToArtifact(artifact, injectFiles);
     }

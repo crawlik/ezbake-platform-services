@@ -1095,6 +1095,9 @@ public class EzSecurityHandler extends EzBakeBaseThriftService implements EzSecu
         Set<Long> fromAppAuths = ezGroups.getAuthorizations(Collections.<String>emptyList(), TokenType.APP, fromApp, null);
         Set<Long> toAppMask = ezGroups.getAppAccessGroup(toAppName);
 
+	log.debug("checking app access. fromApp: {}. fromAppMask: {}. toApp: {}. toAppMask: {}",
+		  fromApp, fromAppAuths, toAppName, toAppMask);
+
         return toAppMask.size() <= 0 || Sets.intersection(toAppMask, fromAppAuths).size() > 0;
     }
 }
