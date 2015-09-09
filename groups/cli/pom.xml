@@ -148,7 +148,7 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>rpm-maven-plugin</artifactId>
                         <configuration>
-                            <name>ezbake-${project.artifactId}</name>
+                            <name>${project.artifactId}</name>
                             <description>${project.name} RPM</description>
                             <license>ASL 2.0</license>
                             <provides>
@@ -163,28 +163,21 @@
                                     <directoryIncluded>true</directoryIncluded>
                                 </mapping>
                                 <mapping>
-                                    <directory>/opt/ezbake/ezbake</directory>
+                                    <directory>/opt/ezbake/${project.artifactId}</directory>
                                     <username>ezbake</username>
                                     <groupname>ezbake</groupname>
                                     <filemode>755</filemode>
                                     <directoryIncluded>true</directoryIncluded>
                                 </mapping>
                                 <mapping>
-                                    <directory>/opt/ezbake/ezbake/${project.artifactId}</directory>
+                                    <directory>/opt/ezbake/${project.artifactId}/bin</directory>
                                     <username>ezbake</username>
                                     <groupname>ezbake</groupname>
                                     <filemode>755</filemode>
                                     <directoryIncluded>true</directoryIncluded>
                                 </mapping>
                                 <mapping>
-                                    <directory>/opt/ezbake/ezbake/${project.artifactId}/bin</directory>
-                                    <username>ezbake</username>
-                                    <groupname>ezbake</groupname>
-                                    <filemode>755</filemode>
-                                    <directoryIncluded>true</directoryIncluded>
-                                </mapping>
-                                <mapping>
-                                    <directory>/opt/ezbake/ezbake/${project.artifactId}/bin</directory>
+                                    <directory>/opt/ezbake/${project.artifactId}/bin</directory>
                                     <username>ezbake</username>
                                     <groupname>ezbake</groupname>
                                     <filemode>644</filemode>
