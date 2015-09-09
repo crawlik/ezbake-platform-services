@@ -33,7 +33,7 @@ import org.apache.thrift.TException;
 import org.elasticsearch.action.update.UpdateRequestBuilder;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-
+import static org.elasticsearch.script.ScriptService.ScriptType;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -250,9 +250,12 @@ public class ElasticsearchUtility {
     }
 
     public static void addScriptToUpdateRequest(UpdateRequestBuilder builder, Map<String, Object> newEventMap, ObjectStatus status, String newLatestEvent) {
-        builder.setScript("ctx._source." + ElasticsearchUtility.OBJECT_EVENTS + " += newEvent;" +
-                "ctx._source." + ElasticsearchUtility.OBJECT_STATUS + " = newStatus;" +
-                "ctx._source." + ElasticsearchUtility.OBJECT_LATEST_EVENT + " = eventText")
+	String scriptText = 
+	    "ctx._source." + ElasticsearchUtility.OBJECT_EVENTS + " += newEvent;" +
+	    "ctx._source." + ElasticsearchUtility.OBJECT_STATUS + " = newStatus;" +
+	    "ctx._source." + ElasticsearchUtility.OBJECT_LATEST_EVENT + " = eventText";
+	
+        builder.setScript(scriptText, ScriptType.INLINE)
                 .addScriptParam("newEvent", newEventMap)
                 .addScriptParam("newStatus", status.toString())
                 .addScriptParam("eventText", newLatestEvent);
