@@ -53,7 +53,14 @@ public class GroupsServiceModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(BaseGroupsService.class).to(CachingEzGroupsService.class);
+
+	// changed CachingEzGroupsService to EzGroupsService
+	// here. There is a bug somewhere causing the cache not to be
+	// updated at times. I'm going to just yank this for now,
+	// since it's not immediately clear when the cache should be
+	// invalidated and this is causing lots of trouble. -- Josh
+        bind(BaseGroupsService.class).to(EzGroupsService.class);
+
         bind(GroupsGraph.class).to(EzGroupsGraphImpl.class);
         bind(new TypeLiteral<CacheLayer<Set<Long>>>(){}).to(RedisCacheLayer.class);
 
