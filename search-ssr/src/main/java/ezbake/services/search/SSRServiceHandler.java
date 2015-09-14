@@ -1989,10 +1989,13 @@ public class SSRServiceHandler extends EzBakeBasePurgeThriftService implements s
     }
 
     private void logError(Exception e, AuditEvent evt, String loggerMessage) {
-        evt.failed();
-        e.printStackTrace();
-        evt.arg(e.getClass().getName(), e);
-        logger.error(loggerMessage);
+	if (evt != null) {
+	    evt.failed();
+	    evt.arg(e.getClass().getName(), e);
+	}
+
+	logger.error(loggerMessage);
+	e.printStackTrace();
     }
 
     public static String getEncodedUserPrincipal(EzSecurityToken userToken) throws UnsupportedEncodingException {
