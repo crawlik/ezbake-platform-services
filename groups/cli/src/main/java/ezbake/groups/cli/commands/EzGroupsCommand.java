@@ -46,7 +46,7 @@ public abstract class EzGroupsCommand {
         this.properties = properties;
     }
 
-    public abstract void runCommand() throws EzConfigurationLoaderException;
+    public abstract void runCommand() throws EzConfigurationLoaderException, CLIException;
 
     public void setConfigurationProperties(Properties configurationProperties) {
         this.properties = configurationProperties;

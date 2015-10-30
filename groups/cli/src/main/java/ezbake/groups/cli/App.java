@@ -18,10 +18,7 @@ import ezbake.base.thrift.EzSecurityTokenException;
 import ezbake.configuration.*;
 import ezbake.groups.cli.commands.*;
 import ezbake.groups.cli.commands.group.*;
-import ezbake.groups.cli.commands.user.CreateAppUserCommand;
-import ezbake.groups.cli.commands.user.GetUser;
-import ezbake.groups.cli.commands.user.GetUserApps;
-import ezbake.groups.cli.commands.user.GetUserAuthorizations;
+import ezbake.groups.cli.commands.user.*;
 import org.kohsuke.args4j.*;
 import org.kohsuke.args4j.spi.SubCommand;
 import org.kohsuke.args4j.spi.SubCommandHandler;
@@ -34,6 +31,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.lang.RuntimeException;
 
 /**
  * User: jhastings
@@ -59,6 +57,7 @@ public class App implements Runnable {
             @SubCommand(name="add-user-to-group", impl=AddUserToGroupCommand.class),
             @SubCommand(name="get-group", impl=GetGroupsCommand.class),
             @SubCommand(name="get-group-members", impl=GetGroupUsersCommand.class),
+            @SubCommand(name="create-user", impl=CreateUserCommand.class),
             @SubCommand(name="get-user", impl=GetUser.class),
             @SubCommand(name="get-user-apps", impl=GetUserApps.class),
             @SubCommand(name="get-user-auths", impl=GetUserAuthorizations.class)
@@ -96,7 +95,7 @@ public class App implements Runnable {
                 command.setConfigurationProperties(loadEzConfiguration());
                 command.runCommand();
             }
-        } catch(CmdLineException|EzConfigurationLoaderException e) {
+        } catch(Exception e) {
             e.printStackTrace();
             System.exit(1);
         }
