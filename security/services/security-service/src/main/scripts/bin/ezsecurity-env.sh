@@ -24,7 +24,7 @@ THRIFT_RUNNER_OPTS="-j ${EZ_PREFIX}/lib/ezbake-security-service.jar \
             -s ${SERVICE_NAME} -p ${PORT} \
             -P ${EZ_PREFIX}/config"
 
-STETHOSCOPE_CLIENT="/opt/ezbake/ezbake-discovery-stethoscope-client/ezbake-discovery-stethoscope-client.jar"
+STETHOSCOPE_CLIENT="/opt/ezbake/ezbake-discovery-stethoscope-client/bin/ezbake-discovery-stethoscope-client.jar"
 STETHOSCOPE="java -jar $STETHOSCOPE_CLIENT \
 -D ezbake.security.ssl.dir=${SSL_DIR} \
 -D service.name=${SERVICE_NAME} \
