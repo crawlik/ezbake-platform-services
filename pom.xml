@@ -119,7 +119,7 @@
             <dependency>
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
-                <version>1.5.2</version>
+                <version>${elasticsearch.version}</version>
             </dependency>
             <dependency>
                 <groupId>args4j</groupId>
