@@ -39,7 +39,7 @@ public class ListDeployedCommand extends BaseCommand {
                         ArtifactHelpers.getServiceId(app) + ":" + app.getVersion());
             }
         } else {
-            throw new DeploymentException(String.format("No matching application found for %s=%s", term, termValue));
+            System.out.println(String.format("No matching application found for %s=%s", term, termValue));
         }
     }
 
