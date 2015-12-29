@@ -24,11 +24,12 @@ APP_ROOT="${PACKAGEROOT}/opt/ezca"
 mkdir -p "${BUILDROOT}" && cd "${BUILDROOT}"
 
 PYENVV=2.7.6
-PYENV=ezca2.0
+PYENV=ezca2.1
 BRANCH=master
 
+PYBIN=/opt/python-2.7.6/bin
 
-PYINSTALLER_REPO="https://github.com/ezbake/pyinstaller.git;pyinstaller;develop"
+PYINSTALLER_REPO="https://github.com/infochimps-forks/pyinstaller.git;/opt/pyinstaller;master"
 REPOS=(${PYINSTALLER_REPO})
 
 function copy_to_build() {
@@ -46,7 +47,7 @@ function install_package() {
     echo "${name} not installed. Installing now"
     pushd "${dir}"
     python setup.py clean -a
-    pip install -r requirements.txt
+    sudo $PYBIN/pip install -r requirements.txt
     pyenv rehash
     popd
 }
@@ -83,14 +84,13 @@ copy_to_build "${REPO_ROOT}/service" "${BUILDROOT}"
 copy_to_build "${REPO_ROOT}/ezca-bootstrap" "${BUILDROOT}"
 
 eval "$(pyenv init -)"
-pyenv shell ${PYENV}
+pyenv shell system
 
-pip list | grep 'setuptools' || curl -L https://bootstrap.pypa.io/get-pip.py | python
-pip list | grep 'zope.interface' || pip install zope.interface
-touch ~/.pyenv/versions/${PYENV}/lib/python2.7/site-packages/zope/__init__.py
+$PYBIN/pip list | grep 'setuptools' || curl -L https://bootstrap.pypa.io/get-pip.py | python
+$PYBIN/pip list | grep 'zope.interface' || sudo $PYBIN/pip install zope.interface
 
 # Install main ezbake libs
-pip install -r "${REPO_ROOT}/requirements.txt"
+sudo $PYBIN/pip install -r "${REPO_ROOT}/requirements.txt"
 
 # Install EzCA packages
 install_package "ezpz" "ezpz"
@@ -118,7 +118,7 @@ EOF
 # Copy system config files
 cp -r "${REPO_ROOT}"/scripts/etc/. "${PACKAGEROOT}/etc"
 
-useradd ezca
+sudo useradd ezca || true
 
 # Update file permissions
 chmod -R o-rwx "${APP_ROOT}"
