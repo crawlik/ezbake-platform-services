@@ -1,0 +1,21 @@
+Application:
+  name: common_services
+  datasets: []
+  security_id:
+  auths: []
+  Services:
+    -
+      type: Thrift
+      language: Java
+      service_name: ins
+      resources:
+        cpu: small
+        mem: small
+        disk: small
+      scaling:
+         number_of_instances: 1
+      artifact_info:
+        bin:  ins-thrift-impl.jar
+        config: []
+      security_id:
+      auths: []
