@@ -2,3 +2,5 @@
 hieradata/
 BUILD/
 .vagrant
+ezcaservice.spec
+.python-version
