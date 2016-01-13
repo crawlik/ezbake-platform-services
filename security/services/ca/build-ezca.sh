@@ -67,7 +67,7 @@ for x in ${REPOS[@]}; do
 
     if [ -d "${dir}" ]; then
         echo "${dir} already checked out"
-        #(cd "${dir}" && git pull) 
+        #(cd "${dir}" && git pull)
     else
         echo "cloning ${repo} into ${dir}"
         git clone "${repo}" "${dir}"
@@ -134,7 +134,7 @@ cd "${REPO_ROOT}"
 
 #$(date +"%Y%m%d%H%M") \
 sudo fpm -f -s dir -t rpm \
-    -n EzCA -v 2.1 --iteration 1 \
+-n EzCA -v 2.1 --iteration $(date +"%Y%m%d%H%M") \
     -C "${PACKAGEROOT}" \
     --rpm-use-file-permissions \
     --rpm-auto-add-directories \

@@ -114,7 +114,7 @@ cd "${REPO_ROOT}"
 
 #iteration $(date +"%Y%m%d%H%M")
 sudo fpm -f -s dir -t rpm \
-    -n EzCA -v 2.1 --iteration 1 \
+    -n EzCA -v 2.1 --iteration $(date +"%Y%m%d%H%M") \
     -C "${PACKAGEROOT}" \
     --rpm-use-file-permissions \
     --rpm-auto-add-directories \
