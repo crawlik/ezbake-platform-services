@@ -27,10 +27,6 @@ PYENVV=2.7.6
 PYENV=ezca2.1
 BRANCH=master
 
-PYBIN=/opt/python-2.7.6/bin
-
-PYINSTALLER_REPO="https://github.com/infochimps-forks/pyinstaller.git;/opt/pyinstaller;master"
-REPOS=(${PYINSTALLER_REPO})
 
 function copy_to_build() {
     local src="$1"
@@ -47,7 +43,7 @@ function install_package() {
     echo "${name} not installed. Installing now"
     pushd "${dir}"
     python setup.py clean -a
-    sudo $PYBIN/pip install -r requirements.txt
+    pip install -r requirements.txt
     pyenv rehash
     popd
 }
@@ -59,24 +55,6 @@ function install_maven() {
 }
 
 echo "cloning the repos from git"
-for x in ${REPOS[@]}; do
-    x=(${x[0]//;/ })
-    repo="${x[0]}"
-    dir="${x[1]}"
-    branch="${x[2]}"
-
-    if [ -d "${dir}" ]; then
-        echo "${dir} already checked out"
-        #(cd "${dir}" && git pull)
-    else
-        echo "cloning ${repo} into ${dir}"
-        git clone "${repo}" "${dir}"
-    fi
-
-    echo "cheking out ${branch}"
-    (cd "${dir}" && git checkout "${branch}")
-done
-
 # Copy local resources to the build directory
 copy_to_build "${REPO_ROOT}/ezpz" "${BUILDROOT}"
 copy_to_build "${REPO_ROOT}/ezpersist" "${BUILDROOT}"
@@ -84,24 +62,26 @@ copy_to_build "${REPO_ROOT}/service" "${BUILDROOT}"
 copy_to_build "${REPO_ROOT}/ezca-bootstrap" "${BUILDROOT}"
 
 eval "$(pyenv init -)"
-pyenv shell system
+eval "$(pyenv virtualenv-init -)"
 
-$PYBIN/pip list | grep 'setuptools' || curl -L https://bootstrap.pypa.io/get-pip.py | python
-$PYBIN/pip list | grep 'zope.interface' || sudo $PYBIN/pip install zope.interface
+pyenv shell "${PYENVV}" || env PYTHON_CONFIGURE_OPTS="--enable-shared" pyenv install --skip-existing $PYENVV
+pyenv shell "${PYENV}" || pyenv virtualenv -f ${PYENVV} ${PYENV} && pyenv shell "${PYENV}"
+
+pip list | grep 'setuptools' || curl -L https://bootstrap.pypa.io/get-pip.py | python
+pushd /opt/pyinstaller ; pip install . ; popd
+pip list | grep 'zope.interface' || pip install zope.interface
 
 # Install main ezbake libs
-sudo $PYBIN/pip install -r "${REPO_ROOT}/requirements.txt"
+pip install -r "${REPO_ROOT}/requirements.txt"
 
 # Install EzCA packages
 install_package "ezpz" "ezpz"
 install_package "ezpersist" "ezpersist"
 install_package ezca "service"
-
 install_maven "ezca-bootstrap"
 
 echo "Building with pyinstaller"
-
-LD_LIBRARY_PATH=/root/.pyenv/versions/${PYENV}/lib pyinstaller -y "service/bin/ezcaservice.py" --hidden-import=pkg_resources
+pyinstaller -y "service/bin/ezcaservice.py" --hidden-import=pkg_resources --debug
 
 echo "Packaging"
 mkdir -p "${PACKAGEROOT}"/etc
@@ -132,9 +112,9 @@ sudo chown -R ezca:ezca "${PACKAGEROOT}/opt/ezca"
 # change back to the repo root
 cd "${REPO_ROOT}"
 
-#$(date +"%Y%m%d%H%M") \
+#iteration $(date +"%Y%m%d%H%M")
 sudo fpm -f -s dir -t rpm \
--n EzCA -v 2.1 --iteration $(date +"%Y%m%d%H%M") \
+    -n EzCA -v 2.1 --iteration $(date +"%Y%m%d%H%M") \
     -C "${PACKAGEROOT}" \
     --rpm-use-file-permissions \
     --rpm-auto-add-directories \

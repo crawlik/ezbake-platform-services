@@ -99,6 +99,7 @@ public class StethoscopeClient implements Runnable {
 
     private final static Logger logger = LoggerFactory.getLogger(StethoscopeClient.class);
 
+    private ThriftClientPool clientPool = null;
     private static StethoscopeService.Client stethoscopeClient = null;
     private EzProperties configuration;
     private HostAndPort privateHostAndPort;
@@ -134,8 +135,6 @@ public class StethoscopeClient implements Runnable {
     @Override
     public void run() {
         try {
-
-            ThriftClientPool clientPool = new ThriftClientPool(configuration);
             EzBakeBaseService.Client baseClient = null;
 
             // The thrift runner takes a bit to start up so lets give it some time
@@ -176,7 +175,7 @@ public class StethoscopeClient implements Runnable {
                         registered = true;
                     }
                     logger.debug("Got a successful ping");
-                    checkInWithStethoscopeServer(clientPool, appName, serviceName, endpoint);
+                    checkInWithStethoscopeServer(appName, serviceName, endpoint);
                 } else {
                     // we failed our pinged and we are are registered so lets un register
                    if(registered) {
@@ -204,11 +203,14 @@ public class StethoscopeClient implements Runnable {
         }
     }
 
-    private void checkInWithStethoscopeServer(ThriftClientPool pool, String appName, String serviceName,
+    private void checkInWithStethoscopeServer(String appName, String serviceName,
         Endpoint endpoint) {
+        if(clientPool == null) {
+            clientPool = new ThriftClientPool(this.configuration);
+        }
         try {
             if(stethoscopeClient == null) {
-                stethoscopeClient = pool.getClient(stethoscopeConstants.SERVICE_NAME, StethoscopeService.Client.class);
+                stethoscopeClient = clientPool.getClient(stethoscopeConstants.SERVICE_NAME, StethoscopeService.Client.class);
             }
             boolean success = stethoscopeClient.checkin(appName, serviceName, endpoint);
             if(success) {
@@ -217,6 +219,7 @@ public class StethoscopeClient implements Runnable {
                 logger.info("Failed to check in with Stethoscope Service!");
             }
         } catch(Exception e) {
+            clientPool = null;
             stethoscopeClient = null;
             logger.warn("Could not check in to stethoscope server!");
         }

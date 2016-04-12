@@ -13,7 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-. common.sh
+. ./common.sh
+set -e -x
 
 REL_PREFIX=""
 
@@ -30,21 +31,24 @@ VERSION=2.1
 RELEASE="${REL_PREFIX}$(date +"%Y%m%d%H%M%S").git.$(git rev-parse --short HEAD)"
 
 #copy nginx binary
-echo_and_execute_cmd "cp -f $CWD/ezbake-nginx/nginx/objs/nginx $APP_CONTAINER/app/nginx"
-echo_and_execute_cmd "mkdir -p $APP_CONTAINER/logs"
+cp -f $CWD/ezbake-nginx/nginx/objs/nginx $APP_CONTAINER/app/nginx
+mkdir -p $APP_CONTAINER/logs
 
 #run generate binaries with pyinstaller
 PYINST_DIR=`mktemp -d $CWD/pyinstaller_XXX`
-echo_and_execute_cmd "mkdir -p $PYINST_DIR"
-echo_and_execute_cmd "pip install --pre -r $APP_PATH/pyRequirements.pip"
-echo_and_execute_cmd "pyinstaller --distpath=$APP_CONTAINER/app --workpath=$PYINST_DIR -y --specpath=$PYINST_DIR --paths=$APP_PATH $APP_PATH/ezReverseProxy.py"
-echo_and_execute_cmd "rm -rf $PYINST_DIR"
+mkdir -p $PYINST_DIR
+pip install --pre -r $APP_PATH/pyRequirements.pip
+pyinstaller --distpath=$APP_CONTAINER/app --workpath=$PYINST_DIR -y --specpath=$PYINST_DIR --paths=$APP_PATH $APP_PATH/ezReverseProxy.py
+rm -rf $PYINST_DIR
 
 ##prepare staging area for RPM
-echo_and_execute_cmd "sudo chmod -R go-rwx $APP_CONTAINER/app"
+sudo chmod -R go-rwx $APP_CONTAINER/app
 
 ##create RPM
-DEPENDENCIES="-d 'ezbake-nginx-module = 2.1' -d 'ezbake-frontend-static-content = 2.1' -d boost -d log4cxx"
 CONFIG_FILES="--config-files $APP_DESTINATION/config/eznginx.properties"
-echo_and_execute_cmd "sudo fpm -s dir -t rpm --rpm-use-file-permissions --rpm-user=$SYSUSER --rpm-group=$SYSGRP --directories=/opt/ezfrontend --vendor=$RPM_VENDOR -n $RPM_NAME -v $VERSION --iteration=$RELEASE $DEPENDENCIES $CONFIG_FILES $APP_CONTAINER/=$APP_DESTINATION $CONTAINER/init.d/=/etc/init.d $CONTAINER/logrotate.d/=/etc/logrotate.d"
+sudo fpm -s dir -t rpm --rpm-use-file-permissions --rpm-user=$SYSUSER --rpm-group=$SYSGRP \
+--directories=/opt/ezfrontend --vendor=$RPM_VENDOR -n $RPM_NAME -v $VERSION --iteration=$RELEASE \
+-d 'ezbake-nginx-module = 2.1' -d 'ezbake-frontend-static-content = 2.1' -d boost -d log4cxx \
+$CONFIG_FILES $APP_CONTAINER/=$APP_DESTINATION $CONTAINER/init.d/=/etc/init.d \
+$CONTAINER/logrotate.d/=/etc/logrotate.d
 
